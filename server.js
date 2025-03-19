@@ -5,12 +5,14 @@ const { randomUUID } = require("crypto");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: { origin: "*" }
+});
 
 app.use(express.static("public"));
 
 io.on("connection", (socket) => {
-    console.log("🔗 Пользователь подключен:", socket.id);
+    console.log("🔗 Пользователь подключился:", socket.id);
 
     socket.on("create-room", () => {
         const roomId = randomUUID();
