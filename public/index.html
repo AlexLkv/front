@@ -1,14 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Video Call</title>
-    <script defer src="app.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    #roomIdInput {
+      margin: 10px;
+    }
+    #videos {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    video {
+      width: 300px;
+      height: 225px;
+      margin: 10px;
+      background: #000;
+    }
+  </style>
 </head>
 <body>
-    <h2>Video Call</h2>
-    <video id="localVideo" autoplay muted></video>
-    <video id="remoteVideo" autoplay></video>
-    <button id="startCall">Start Call</button>
+  <h1>Video Chat</h1>
+  <div>
+    <button id="createRoomBtn">Create Room</button>
+    <input type="text" id="roomIdInput" placeholder="Enter Room ID">
+    <button id="joinRoomBtn">Join Room</button>
+  </div>
+  <div id="videos"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
 </body>
 </html>
