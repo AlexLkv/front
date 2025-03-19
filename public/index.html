@@ -14,7 +14,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io("https://alexlkv-front-9846.twc1.net");
+        const socket = io();
 
         document.getElementById("create-room").addEventListener("click", () => {
             socket.emit("create-room");
