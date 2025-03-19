@@ -32,4 +32,3 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         });
     })
     .catch((error) => console.error("Ошибка доступа к камере:", error));
-
