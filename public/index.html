@@ -1,40 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Chat</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    #roomIdInput {
-      margin: 10px;
-    }
-    #videos {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    video {
-      width: 300px;
-      height: 225px;
-      margin: 10px;
-      background: #000;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Видеочат</title>
 </head>
 <body>
-  <h1>Video Chat</h1>
-  <div>
-    <button id="createRoomBtn">Create Room</button>
-    <input type="text" id="roomIdInput" placeholder="Enter Room ID">
-    <button id="joinRoomBtn">Join Room</button>
-  </div>
-  <div id="videos"></div>
+    <h2>Видеочат</h2>
+    <input type="text" id="room-id" placeholder="Введите ID комнаты">
+    <button id="join">Присоединиться</button>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="client.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-peer@latest/simplepeer.min.js"></script>
+    <script>
+        const socket = io();
+        const localVideo = document.getElementById("localVideo");
+        const remoteVideo = document.getElementById("remoteVideo");
+        let peer;
+
+        document.getElementById("join").addEventListener("click", async () => {
+            const roomId = document.getElementById("room-id").value;
+            const userId = socket.id;
+
+            socket.emit("join-room", roomId, userId);
+
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            localVideo.srcObject = stream;
+
+            socket.on("user-connected", (userId) => {
+                peer = new SimplePeer({ initiator: true, trickle: false, stream });
+
+                peer.on("signal", (data) => {
+                    socket.emit("signal", { to: userId, from: socket.id, signal: data });
+                });
+
+                peer.on("stream", (remoteStream) => {
+                    remoteVideo.srcObject = remoteStream;
+                });
+
+                socket.on("signal", (data) => {
+                    peer.signal(data.signal);
+                });
+            });
+
+            socket.on("user-disconnected", () => {
+                peer.destroy();
+            });
+        });
+    </script>
 </body>
 </html>
